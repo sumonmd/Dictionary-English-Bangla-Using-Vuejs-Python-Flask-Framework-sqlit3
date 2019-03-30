@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ url_for('static',     filename='css/template.css') }}">
+
+    <title>Document</title>
+</head>
+<body>
+<div class="ditionary" id="dict-app">
+    <div class="nav-section">
+        <div class="container">
+            <div class="row">
+                <ul class="menu">
+                    <li><a href="/">BanglaDictionary</a></li>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/about">About</a></li>
+                </ul>
+            </div>
+            <div class="row">
+                    <div class="left" style="background-color:#bbb;">
+                      <h2>Search for a word</h2>
+                        <form action="{{ url_for('details') }}" method="POST">
+                          <div class="form-group">
+                            <input name="word" type="text" v-model="sword" v-on:keyup="searchChar()" class="form-control" style="padding:25px;font-size: 20px; width:95%;display: inline-block;" placeholder="Search your word">
+                            <button type="submit" style="float:right;font-size: 25px;padding:7px;background-color:#ff6699" class="gobtn">Go</button>
+                          </div>
+                        </form>
+
+                        <ul id="myMenu" class="list-group" >
+                        <li v-for="(sting,i) in dist " class="list-group-item items" v-on:click="oneWord(sting)" style="background-color:#009999"><a href="#"><% sting.word %><p><% sting.mean %></p></a></li>
+                      </ul>
+                        <div class="details">
+                            <div class="word">
+                                <h1></h1>
+                            </div>
+                            <div class="mean">
+                                <h1></h1>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+        </div>
+    </div>
+</div>
+    <script src="https://unpkg.com/vue@2.4.4/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script type="text/javascript">
+  var app = new Vue({
+  el: '#dict-app',
+  data: {
+           sword:'',
+           dist:[],
+           
+    },
+    delimiters: ["<%","%>"],
+    methods:{
+        searchChar() {
+          if(this.sword==''){
+            this.dist=[]
+          }
+          axios({method:'GET',url:'http://127.0.0.1:5000/get/'+ this.sword})
+          .then(result=>{
+            if(result.data.result.length>0){
+                this.dist=result.data.result;
+                console.log("1")
+            }
+            else{
+                this.dist=[]
+                console.log("2")
+            }
+          })
+      },
+      oneWord(sting){
+        this.sword=sting.word
+        this.dist=[]
+      }
+    }
+
+});
+
+</script>
+
+    
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+</body>
+</html>
